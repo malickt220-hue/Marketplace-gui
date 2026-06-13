@@ -1,0 +1,6 @@
+{
+  "name": "Guinée Market Pro",
+  "description": "Plateforme moderne de commerce en ligne et marketplace nationale souveraine en République de Guinée.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

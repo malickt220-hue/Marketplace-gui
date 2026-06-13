@@ -1,0 +1,149 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents a buyer, seller, or administrator on Guinée Market Pro",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique Firebase Authentication UID of the user" },
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "description": "Email address of the user" },
+        "phone": { "type": "string", "description": "Phone number (useful for Mobile Money alerts)" },
+        "role": { "type": "string", "enum": ["buyer", "seller", "admin"], "description": "Role determining permissions" },
+        "avatarUrl": { "type": "string", "description": "URL of the profile picture" },
+        "isApproved": { "type": "boolean", "description": "Whether the seller is approved by an administrator" },
+        "storeName": { "type": "string", "description": "Name of the digital storefront (sellers only)" },
+        "storeDescription": { "type": "string", "description": "A description of the store (sellers only)" },
+        "storeAddress": { "type": "string", "description": "Physical location/address of the store (sellers only)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when account was created" }
+      },
+      "required": ["id", "name", "email", "role", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A product listed on the marketplace",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique product ID" },
+        "sellerId": { "type": "string", "description": "The merchant ID who owns this listing" },
+        "sellerName": { "type": "string", "description": "The storefront name of the merchant" },
+        "name": { "type": "string", "description": "Product title" },
+        "description": { "type": "string", "description": "Detailed product description" },
+        "price": { "type": "number", "description": "Price in GNF (Guinean Franc)" },
+        "stock": { "type": "integer", "description": "Available stock quantity" },
+        "category": { "type": "string", "description": "Product category (e.g. Électronique, Agriculture)" },
+        "imageUrl": { "type": "string", "description": "URL of the product photo" },
+        "rating": { "type": "number", "description": "Average user rating from 1 to 5" },
+        "ratingsCount": { "type": "integer", "description": "Number of reviews submitted" },
+        "promotionPrice": { "type": "number", "description": "Discounted price in GNF if a promotion is active" },
+        "isApproved": { "type": "boolean", "description": "Approved by admin for public listing" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp when product was added" }
+      },
+      "required": ["id", "sellerId", "name", "price", "stock", "category", "imageUrl", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Represents an online purchase",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique order tracking ID" },
+        "buyerId": { "type": "string", "description": "The customer ID" },
+        "buyerName": { "type": "string", "description": "Name of the customer" },
+        "buyerPhone": { "type": "string", "description": "Phone number of the buyer for mobile money/delivery" },
+        "sellerId": { "type": "string", "description": "The merchant fulfilling this order" },
+        "items": {
+          "type": "array",
+          "description": "List of products bought",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "productName": { "type": "string" },
+              "quantity": { "type": "integer" },
+              "price": { "type": "number" }
+            }
+          }
+        },
+        "totalAmount": { "type": "number", "description": "Total checkout price in GNF" },
+        "paymentMethod": { "type": "string", "enum": ["orange_money", "momo", "card", "cod"], "description": "Chosen payment gateway" },
+        "paymentStatus": { "type": "string", "enum": ["pending", "paid", "failed"], "description": "Status of payment transfer" },
+        "status": { "type": "string", "enum": ["pending", "processing", "shipped", "delivered", "cancelled"], "description": "Fulfillment status" },
+        "deliveryAddress": { "type": "string", "description": "Address/town/prefecture where product is delivered" },
+        "receiptUrl": { "type": "string", "description": "Generated PDF invoice download link" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "buyerId", "sellerId", "items", "totalAmount", "paymentMethod", "paymentStatus", "status", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "In-app message exchanged between buyer and seller",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Message ID" },
+        "chatId": { "type": "string", "description": "Sort-sorted composite identifier user1_user2" },
+        "senderId": { "type": "string", "description": "UID of the message author" },
+        "senderName": { "type": "string", "description": "Display name of the author" },
+        "receiverId": { "type": "string", "description": "UID of the recipient" },
+        "content": { "type": "string", "description": "Plain text message content" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "chatId", "senderId", "senderName", "receiverId", "content", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Product feedback and rating from a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Review ID" },
+        "productId": { "type": "string", "description": "Target product ID" },
+        "userId": { "type": "string", "description": "The reviewer UID" },
+        "userName": { "type": "string", "description": "The reviewer name" },
+        "rating": { "type": "number", "description": "Rating score from 1 to 5" },
+        "comment": { "type": "string", "description": "Written review" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "productId", "userId", "userName", "rating", "comment", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "System audit trail for tracking sensitive administrative operations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "action": { "type": "string", "description": "The admin activity description (e.g. Approved Seller)" },
+        "userId": { "type": "string", "description": "The moderator UID" },
+        "userName": { "type": "string", "description": "The moderator name" },
+        "details": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "action", "userId", "userName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles database"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Catalog of all registered products"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "List of buyer purchase transactions"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Direct communication message threads"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "User submitted reviews and star ratings"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Activity journal for administrators"
+    }
+  }
+}
